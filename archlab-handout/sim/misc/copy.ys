@@ -1,0 +1,49 @@
+# copy_block
+# 任家纬
+# 2020012377
+
+.pos 0
+    irmovl stack, %esp
+    call main
+    halt
+
+.align 4 
+# Source block 
+src: 
+    .long 0x00a 
+    .long 0x0b0 
+    .long 0xc00 
+# Destination block 
+dest: 
+    .long 0x111 
+    .long 0x222 
+    .long 0x333
+
+main:
+    irmovl src, %edi # src
+    irmovl dest, %esi # dest
+    irmovl $3, %edx
+    call copy_block
+    ret
+
+copy_block:
+    irmovl $0, %eax # int result = 0
+    irmovl $0, %ebx # val
+    irmovl $4, %ecx
+while:
+    addl %edx, %edx     # if (len == 0)
+    je return
+
+    mrmovl (%edi), %ebx # int val = *src
+    addl %ecx, %edi     # src++
+    rmmovl %ebx, (%esi) # *dest = val
+    addl %ecx, %esi     # dest++
+    xorl %ebx, %eax      # result ^= val
+    irmovl $1, %ebx         
+    subl %ebx, %edx     # len--
+    jmp while
+return: 
+    ret
+
+.pos 0x200
+stack:

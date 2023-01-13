@@ -1,0 +1,39 @@
+# sum_list
+# 任家纬
+# 2020012377
+
+.pos 0
+    irmovl stack, %esp
+    call main
+    halt
+
+.align 4 
+ele1: 
+    .long 0x00a 
+    .long ele2 
+ele2: 
+    .long 0x0b0 
+    .long ele3 
+ele3: 
+    .long 0xc00 
+    .long 0
+
+main:
+    irmovl ele1, %edi # edi 存地址
+    call sum_list
+    ret
+
+sum_list:
+    irmovl $0, %eax # eax存返回值
+    irmovl $0, %edx  # 方便cmp
+while:
+    mrmovl (%edi), %ebx # add不能立即数
+    addl %ebx, %eax   # val += ls->val
+    mrmovl 4(%edi), %edi    # ls = ls->next
+    subl %edx, %edi
+    jne while   
+return:
+    ret
+
+.pos 0x200
+stack:
